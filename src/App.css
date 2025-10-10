@@ -42,14 +42,14 @@ body {
   border-radius: 10px;
   padding: 40px;
   text-align: center;
-  box-shadow: 0 0 30px #0f0;
+  box-shadow: 0 0 5px #0f0;
   min-width: 400px;
 }
 
 .title {
   font-size: 3rem;
   color: #0f0;
-  text-shadow: 0 0 10px #0f0;
+  text-shadow: 0 0 2px #0f0;
   margin-bottom: 30px;
   letter-spacing: 3px;
 }
@@ -57,7 +57,7 @@ body {
 .timer {
   font-size: 4rem;
   color: #ff0000;
-  text-shadow: 0 0 20px #ff0000;
+  text-shadow: 0 0 3px #ff0000;
   margin-bottom: 40px;
   font-weight: bold;
   animation: pulse 1s infinite;
@@ -66,6 +66,14 @@ body {
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
+}
+
+.attempts-counter {
+  color: #ff6600;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-shadow: 0 0 2px #ff6600;
 }
 
 .defuse-panel {
@@ -94,7 +102,7 @@ body {
 
 .code-input:focus {
   outline: none;
-  box-shadow: 0 0 0.5px #0f0;
+  box-shadow: 0 0 2px #0f0;
 }
 
 .defuse-btn {
@@ -113,7 +121,7 @@ body {
 .defuse-btn:hover {
   background: #0f0;
   color: #000;
-  box-shadow: 0 0 20px #0f0;
+  box-shadow: 0 0 3px #0f0;
 }
 
 .hint {
@@ -122,7 +130,26 @@ body {
   font-style: italic;
 }
 
+.error-message {
+  color: #ff0000;
+  background: rgba(255, 0, 0, 0.2);
+  border: 2px solid #ff0000;
+  border-radius: 5px;
+  padding: 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 20px;
+  text-shadow: 0 0 2px #ff0000;
+  animation: errorPulse 0.5s ease-in-out 3;
+}
+
+@keyframes errorPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
 .explosion {
+  position: relative;
   background: rgba(255, 0, 0, 0.9);
   border: 3px solid #ff0000;
   border-radius: 10px;
@@ -130,12 +157,28 @@ body {
   text-align: center;
   color: #fff;
   animation: shake 0.5s infinite;
+  overflow: hidden;
+}
+
+.boom-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.explosion-content {
+  position: relative;
+  z-index: 2;
 }
 
 .explosion h1 {
   font-size: 4rem;
   margin-bottom: 20px;
-  text-shadow: 0 0 20px #ff0000;
+  text-shadow: 0 0 3px #ff0000;
 }
 
 .explosion p {
@@ -171,7 +214,7 @@ body {
 .defused h1 {
   font-size: 3rem;
   margin-bottom: 20px;
-  text-shadow: 0 0 20px #0f0;
+  text-shadow: 0 0 3px #0f0;
 }
 
 .defused p {

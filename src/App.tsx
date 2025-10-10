@@ -2,10 +2,12 @@ import { useState, useEffect, useRef } from 'react'
 import './App.css'
 
 function App() {
-    const [timeLeft, setTimeLeft] = useState(300)
+    const [timeLeft, setTimeLeft] = useState(3600)
     const [code, setCode] = useState('')
     const [isDefused, setIsDefused] = useState(false)
     const [isExploded, setIsExploded] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
+    const [wrongAttempts, setWrongAttempts] = useState(0)
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
     useEffect(() => {
@@ -13,7 +15,6 @@ function App() {
             localStorage.setItem('bombSolution', 'code')
         }
 
-        // Ambient Matrix-style audio
         const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
 
         const createAmbientSound = () => {
@@ -115,8 +116,11 @@ function App() {
         const solution = localStorage.getItem('bombSolution')
         if (code.toLowerCase() === solution?.toLowerCase()) {
             setIsDefused(true)
+            setErrorMessage('')
         } else {
-            setTimeLeft(prev => Math.max(0, prev - 30))
+            setWrongAttempts(prev => prev + 1)
+            setErrorMessage('Code incorrect')
+            setTimeout(() => setErrorMessage(''), 2000)
         }
     }
 
@@ -128,34 +132,41 @@ function App() {
 
     return (
         <div className="app">
-            <canvas ref={canvasRef} className="matrix-bg" />
+            {isExploded && (
+                <>
+                    <div className="overlay" />
+                    <video autoPlay loop muted className="boom-video">
+                        <source src="/time-bomb/boom.mp4" type="video/mp4" />
+                    </video>
+                </>
+            )}
+            {!isExploded && <canvas ref={canvasRef} className="matrix-bg" />}
 
             <div className="bomb-container">
                 {isExploded ? (
-                    <div className="explosion">
-                        <h1>💥 BOOM! 💥</h1>
-                        <p>La bombe a explosé!</p>
-                        <button onClick={() => window.location.reload()}>Réessayer</button>
-                    </div>
+                    <></>
                 ) : isDefused ? (
                     <div className="defused">
-                        <h1>✅ BOMBE DÉSAMORCÉE!</h1>
-                        <p>Félicitations! Vous avez sauvé la situation.</p>
-                        <button onClick={() => window.location.reload()}>Recommencer</button>
+                        <h1>✅ DÉSAMORCÉE!</h1>
+                        <p>Bravo!</p>
                     </div>
                 ) : (
                     <div className="bomb-interface">
-                        <h1 className="title">BOMBE À RETARDEMENT</h1>
+                        <h1 className="title">DÉSAMORCER</h1>
                         <div className="timer">{formatTime(timeLeft)}</div>
+                        {wrongAttempts > 0 && (
+                            <div className="attempts-counter">
+                                Tentatives échouées: {wrongAttempts}
+                            </div>
+                        )}
 
                         <div className="defuse-panel">
-                            <p>Entrez le code de désamorçage:</p>
                             <input
                                 type="text"
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleDefuse()}
-                                placeholder="CODE DE DÉSAMORÇAGE"
+                                placeholder="CODE"
                                 className="code-input"
                                 maxLength={10}
                             />
@@ -163,10 +174,12 @@ function App() {
                                 DÉSAMORCER
                             </button>
                         </div>
+
+                        {errorMessage && <p className="error-message">{errorMessage}</p>}
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     )
 }
 

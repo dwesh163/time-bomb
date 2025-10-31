@@ -76,6 +76,45 @@ body {
   text-shadow: 0 0 2px #ff6600;
 }
 
+.start-description {
+  color: #0f0;
+  font-size: 1.5rem;
+  margin-bottom: 30px;
+  text-shadow: 0 0 2px #0f0;
+}
+
+.start-btn {
+  background: #000;
+  border: 3px solid #0f0;
+  color: #0f0;
+  font-family: 'Courier New', monospace;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 20px 40px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  animation: startPulse 2s infinite;
+}
+
+.start-btn:hover {
+  background: #0f0;
+  color: #000;
+  box-shadow: 0 0 5px #0f0;
+}
+
+@keyframes startPulse {
+  0%, 100% {
+    border-color: #0f0;
+    color: #0f0;
+  }
+  50% {
+    border-color: #00ff00;
+    color: #00ff00;
+  }
+}
+
 .defuse-panel {
   margin-bottom: 30px;
 }

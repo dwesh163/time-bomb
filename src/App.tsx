@@ -8,6 +8,7 @@ function App() {
     const [isExploded, setIsExploded] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
     const [wrongAttempts, setWrongAttempts] = useState(0)
+    const [isStarted, setIsStarted] = useState(false)
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
     useEffect(() => {
@@ -50,13 +51,13 @@ function App() {
     }, [])
 
     useEffect(() => {
-        if (timeLeft > 0 && !isDefused && !isExploded) {
+        if (timeLeft > 0 && !isDefused && !isExploded && isStarted) {
             const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
             return () => clearTimeout(timer)
-        } else if (timeLeft === 0 && !isDefused) {
+        } else if (timeLeft === 0 && !isDefused && isStarted) {
             setIsExploded(true)
         }
-    }, [timeLeft, isDefused, isExploded])
+    }, [timeLeft, isDefused, isExploded, isStarted])
 
     useEffect(() => {
         const canvas = canvasRef.current
@@ -119,7 +120,7 @@ function App() {
             setErrorMessage('')
         } else {
             setWrongAttempts(prev => prev + 1)
-            setErrorMessage('Code incorrect')
+            setErrorMessage('Incorrect code')
             setTimeout(() => setErrorMessage(''), 2000)
         }
     }
@@ -147,16 +148,24 @@ function App() {
                     <></>
                 ) : isDefused ? (
                     <div className="defused">
-                        <h1>✅ DÉSAMORCÉE!</h1>
-                        <p>Bravo!</p>
+                        <h1>✅ DEFUSED!</h1>
+                        <p>Well done!</p>
+                    </div>
+                ) : !isStarted ? (
+                    <div className="bomb-interface">
+                        <h1 className="title">TIME BOMB</h1>
+                        <p className="start-description">Ready to defuse this bomb?</p>
+                        <button onClick={() => setIsStarted(true)} className="start-btn">
+                            START
+                        </button>
                     </div>
                 ) : (
                     <div className="bomb-interface">
-                        <h1 className="title">DÉSAMORCER</h1>
+                        <h1 className="title">DEFUSE</h1>
                         <div className="timer">{formatTime(timeLeft)}</div>
                         {wrongAttempts > 0 && (
                             <div className="attempts-counter">
-                                Tentatives échouées: {wrongAttempts}
+                                Failed attempts: {wrongAttempts}
                             </div>
                         )}
 
@@ -171,7 +180,7 @@ function App() {
                                 maxLength={10}
                             />
                             <button onClick={handleDefuse} className="defuse-btn">
-                                DÉSAMORCER
+                                DEFUSE
                             </button>
                         </div>
 

@@ -148,7 +148,7 @@ function App() {
                     <></>
                 ) : isDefused ? (
                     <div className="defused">
-                        <h1>✅ DEFUSED!</h1>
+                        <h1>DEFUSED!</h1>
                         <p>Well done!</p>
                     </div>
                 ) : !isStarted ? (

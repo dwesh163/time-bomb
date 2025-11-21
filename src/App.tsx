@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import './App.css'
+import { initializeSecureStorage, getSecureCode, isSecureStorageInitialized } from './utils/secureStorage'
 
 function App() {
     const [timeLeft, setTimeLeft] = useState(3600)
@@ -9,12 +10,24 @@ function App() {
     const [errorMessage, setErrorMessage] = useState('')
     const [wrongAttempts, setWrongAttempts] = useState(0)
     const [isStarted, setIsStarted] = useState(false)
+    const [showCodePrompt, setShowCodePrompt] = useState(false)
+    const [initialCode, setInitialCode] = useState('')
     const canvasRef = useRef<HTMLCanvasElement>(null)
 
     useEffect(() => {
-        if (!localStorage.getItem('bombSolution')) {
-            localStorage.setItem('bombSolution', 'code')
-        }
+        const init = async () => {
+            if (!isSecureStorageInitialized()) {
+                const oldSolution = localStorage.getItem('bombSolution');
+                if (oldSolution) {
+                    await initializeSecureStorage(oldSolution);
+                    localStorage.removeItem('bombSolution');
+                } else {
+                    setShowCodePrompt(true);
+                    return;
+                }
+            }
+        };
+        init();
 
         const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
 
@@ -113,8 +126,8 @@ function App() {
         }
     }, [])
 
-    const handleDefuse = () => {
-        const solution = localStorage.getItem('bombSolution')
+    const handleDefuse = async () => {
+        const solution = await getSecureCode()
         if (code.toLowerCase() === solution?.toLowerCase()) {
             setIsDefused(true)
             setErrorMessage('')
@@ -122,6 +135,13 @@ function App() {
             setWrongAttempts(prev => prev + 1)
             setErrorMessage('Incorrect code')
             setTimeout(() => setErrorMessage(''), 2000)
+        }
+    }
+
+    const handleSetInitialCode = async () => {
+        if (initialCode.trim().length > 0) {
+            await initializeSecureStorage(initialCode.trim())
+            setShowCodePrompt(false)
         }
     }
 
@@ -144,7 +164,27 @@ function App() {
             {!isExploded && <canvas ref={canvasRef} className="matrix-bg" />}
 
             <div className="bomb-container">
-                {isExploded ? (
+                {showCodePrompt ? (
+                    <div className="bomb-interface">
+                        <h1 className="title">SET CODE</h1>
+                        <p className="start-description">Enter the defuse code for this bomb</p>
+                        <div className="defuse-panel">
+                            <input
+                                type="text"
+                                value={initialCode}
+                                onChange={(e) => setInitialCode(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSetInitialCode()}
+                                placeholder="ENTER CODE"
+                                className="code-input"
+                                maxLength={20}
+                                autoFocus
+                            />
+                            <button onClick={handleSetInitialCode} className="defuse-btn">
+                                SET
+                            </button>
+                        </div>
+                    </div>
+                ) : isExploded ? (
                     <></>
                 ) : isDefused ? (
                     <div className="defused">

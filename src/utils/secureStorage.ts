@@ -69,10 +69,13 @@ function generateUUID(): string {
 }
 
 async function generateRandomEncrypted(key: CryptoKey): Promise<string> {
-    const randomLength = 50 + Math.floor(Math.random() * 30);
-    const randomBytes = crypto.getRandomValues(new Uint8Array(randomLength));
-    const randomText = btoa(String.fromCharCode(...randomBytes));
-    const fakeData = `FAKE:${randomText}:FAKE`;
+    const randomLength1 = 30 + Math.floor(Math.random() * 20);
+    const randomLength2 = 30 + Math.floor(Math.random() * 20);
+    const randomBytes1 = crypto.getRandomValues(new Uint8Array(randomLength1));
+    const randomBytes2 = crypto.getRandomValues(new Uint8Array(randomLength2));
+    const randomText1 = btoa(String.fromCharCode(...randomBytes1));
+    const randomText2 = btoa(String.fromCharCode(...randomBytes2));
+    const fakeData = `FAKE:${randomText1}:${randomText2}:FAKE`;
     return await encryptData(fakeData, key);
 }
 
@@ -121,8 +124,8 @@ export async function initializeSecureStorage(code: string): Promise<void> {
 
     const realCodePosition = Math.floor(Math.random() * (TOTAL_ENTRIES - 1));
 
-    const randomBefore = crypto.getRandomValues(new Uint8Array(30));
-    const randomAfter = crypto.getRandomValues(new Uint8Array(30));
+    const randomBefore = crypto.getRandomValues(new Uint8Array(35));
+    const randomAfter = crypto.getRandomValues(new Uint8Array(35));
     const randomBeforeText = btoa(String.fromCharCode(...randomBefore));
     const randomAfterText = btoa(String.fromCharCode(...randomAfter));
     const realCodeData = `CODE:${randomBeforeText}:${code}:${randomAfterText}:CODE`;

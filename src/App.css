@@ -370,3 +370,5 @@ body {
     --text-secondary: #ffffff;
   }
 }
+.input-with-reveal { display: flex; gap: 8px; align-items: center; }
+.reveal-btn { padding: 6px 8px; cursor: pointer; }

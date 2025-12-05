@@ -13,6 +13,7 @@ function App() {
     const [showCodePrompt, setShowCodePrompt] = useState(false)
     const [initialCode, setInitialCode] = useState('')
     const canvasRef = useRef<HTMLCanvasElement>(null)
+    const [showInitialCode, setShowInitialCode] = useState(false)
 
     useEffect(() => {
         const init = async () => {
@@ -169,16 +170,28 @@ function App() {
                         <h1 className="title">SET CODE</h1>
                         <p className="start-description">Enter the defuse code for this bomb</p>
                         <div className="defuse-panel">
-                            <input
-                                type="text"
-                                value={initialCode}
-                                onChange={(e) => setInitialCode(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && handleSetInitialCode()}
-                                placeholder="ENTER CODE"
-                                className="code-input"
-                                maxLength={20}
-                                autoFocus
-                            />
+                            <div className="input-with-reveal">
+                                <input
+                                    type={showInitialCode ? 'text' : 'password'}
+                                    value={initialCode}
+                                    onChange={(e) => setInitialCode(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleSetInitialCode()}
+                                    placeholder="ENTER CODE"
+                                    className="code-input"
+                                    maxLength={20}
+                                    autoFocus
+                                    aria-label="Initial code"
+                                />
+                                <button
+                                    type="button"
+                                    className="reveal-btn"
+                                    onClick={() => setShowInitialCode((s) => !s)}
+                                    aria-pressed={showInitialCode}
+                                    aria-label={showInitialCode ? 'Hide code' : 'Show code'}
+                                >
+                                    {showInitialCode ? 'Hide' : 'Show'}
+                                </button>
+                            </div>
                             <button onClick={handleSetInitialCode} className="defuse-btn">
                                 SET
                             </button>
